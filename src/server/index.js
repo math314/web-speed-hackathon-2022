@@ -1,6 +1,7 @@
 import "regenerator-runtime/runtime";
 import fastify from "fastify";
 import fastifySensible from "fastify-sensible";
+import fastifyCompress from "fastify-compress";
 
 import { User } from "../model/index.js";
 
@@ -21,6 +22,7 @@ const server = fastify({
         },
       },
 });
+server.register(fastifyCompress);
 server.register(fastifySensible);
 
 server.addHook("onRequest", async (req, res) => {
