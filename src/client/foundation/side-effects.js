@@ -1,10 +1,8 @@
-import "core-js";
 import "regenerator-runtime/runtime";
-import "es5-shim";
-import "es6-shim";
-import "es7-shim";
-import "@fortawesome/fontawesome-free/js/fontawesome";
-import "@fortawesome/fontawesome-free/js/solid";
-import "@fortawesome/fontawesome-free/js/regular";
 
-// import "@fortawesome/fontawesome-free/svgs/brands"
+import { dom, library } from '@fortawesome/fontawesome-svg-core';
+import { faInfoCircle, faTicketAlt } from '@fortawesome/free-solid-svg-icons'
+import { faHandPeace } from '@fortawesome/free-regular-svg-icons'
+
+library.add(faInfoCircle, faTicketAlt, faHandPeace);
+dom.watch();
