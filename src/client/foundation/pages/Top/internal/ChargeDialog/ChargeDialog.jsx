@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import React, { forwardRef, useCallback, useState } from "react";
-import zenginCode from "zengin-code";
 
 import { Dialog } from "../../../../components/layouts/Dialog";
 import { Spacer } from "../../../../components/layouts/Spacer";
@@ -11,6 +10,20 @@ import { Space } from "../../../../styles/variables";
 
 const CANCEL = "cancel";
 const CHARGE = "charge";
+
+let zenginCodeRequested = false;
+let zenginCode = undefined;
+export const tryLoadingZenginCode = () => {
+  if (zenginCodeRequested) return zenginCode;
+  zenginCodeRequested = true;
+  import(
+    /* webpackChunkName: "zengin-code" */
+    /* webpackMode: "lazy" */
+    "zengin-code"
+    ).then(r => {
+    zenginCode = r;
+  });
+};
 
 /**
  * @typedef Props
@@ -67,11 +80,13 @@ export const ChargeDialog = forwardRef(({ onComplete }, ref) => {
     [charge, bankCode, branchCode, accountNo, amount, onComplete, clearForm],
   );
 
-  const bankList = Object.entries(zenginCode).map(([code, { name }]) => ({
+  const zenginCode = tryLoadingZenginCode();
+
+  const bankList = zenginCode ? Object.entries(zenginCode).map(([code, { name }]) => ({
     code,
     name,
-  }));
-  const bank = zenginCode[bankCode];
+  })) : null;
+  const bank = zenginCode?.[bankCode];
   const branch = bank?.branches[branchCode];
 
   return (
@@ -92,7 +107,7 @@ export const ChargeDialog = forwardRef(({ onComplete }, ref) => {
             </label>
 
             <datalist id="ChargeDialog-bank-list">
-              {bankList.map(({ code, name }) => (
+              {bankList != null && bankList.map(({ code, name }) => (
                 <option key={code} value={code}>{`${name} (${code})`}</option>
               ))}
             </datalist>

@@ -40,7 +40,7 @@ module.exports = [
                   "@babel/preset-env",
                   {
                     modules: "cjs",
-                    spec: true,
+                    exclude: ["proposal-dynamic-import"],
                   },
                 ],
                 "@babel/preset-react",
