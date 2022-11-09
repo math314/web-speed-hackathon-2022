@@ -45,17 +45,13 @@ export function useAnimation({ duration, end, start, timingFunction }) {
       const percentage = timingFunction(elapsed / duration);
       setValue(start + (end - start) * percentage);
 
-      timer.current = setTimeout(tick, 0);
+      timer.current = requestAnimationFrame(tick);
     };
 
-    timer.current = setTimeout(tick, 0);
+    timer.current = requestAnimationFrame(tick);
   }, [start, end, duration, timingFunction]);
 
-  const abortAnimation = useCallback(() => {
-    if (timer.current !== null) {
-      clearInterval(timer.current);
-    }
-  }, []);
+  const abortAnimation = useCallback(() => {}, []);
 
   const resetAnimation = useCallback(() => {
     setValue(start);

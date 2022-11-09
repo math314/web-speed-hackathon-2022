@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { difference, slice } from "lodash";
 import moment from "moment-timezone";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -31,7 +31,7 @@ function useTodayRacesWithAnimation(races) {
 
   useEffect(() => {
     const isRacesUpdate =
-      _.difference(
+      difference(
         races.map((e) => e.id),
         prevRaces.current.map((e) => e.id),
       ).length !== 0;
@@ -62,7 +62,7 @@ function useTodayRacesWithAnimation(races) {
       }
 
       numberOfRacesToShow.current++;
-      setRacesToShow(_.slice(races, 0, numberOfRacesToShow.current));
+      setRacesToShow(slice(races, 0, numberOfRacesToShow.current));
     }, 100);
   }, [isRacesUpdate, races]);
 
@@ -171,7 +171,7 @@ export const Top = () => {
         {todayRacesToShow.length > 0 && (
           <RecentRaceList>
             {todayRacesToShow.map((race) => (
-              <RecentRaceList.Item key={race.id} race={race} />
+              <RecentRaceList.Item key={race.id} race={race} closeAt={race.closeAt} />
             ))}
           </RecentRaceList>
         )}

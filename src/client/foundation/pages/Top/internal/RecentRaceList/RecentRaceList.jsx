@@ -46,19 +46,8 @@ const RaceTitle = styled.h2`
  */
 
 /** @type {React.VFC<ItemProps>} */
-const Item = ({ race }) => {
-  const [closeAtText, setCloseAtText] = useState(formatCloseAt(race.closeAt));
-
-  // 締切はリアルタイムで表示したい
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCloseAtText(formatCloseAt(race.closeAt));
-    }, 0);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [race.closeAt]);
+const Item = ({ race, closeAt }) => {
+  const closeAtText = formatCloseAt(closeAt);
 
   const {
     abortAnimation,
