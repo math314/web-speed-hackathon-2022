@@ -7,6 +7,6 @@ const overrides = {
 }
 
 const client = merge(common[0], overrides);
-const server = merge(common[1], overrides);
+const server = common[1];
 
 module.exports = [client, server];
