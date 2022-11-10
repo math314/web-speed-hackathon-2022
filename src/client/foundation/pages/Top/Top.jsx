@@ -140,20 +140,18 @@ export const Top = () => {
   const todayRaces =
     raceData != null
       ? [...raceData.races]
+          .filter((/** @type {Model.Race} */ race) => isSameDay(race.startAt, date))
           .sort(
             (/** @type {Model.Race} */ a, /** @type {Model.Race} */ b) =>
-              Date.parse(a.startAt) - Date.parse(b.startAt),
-          )
-          .filter((/** @type {Model.Race} */ race) =>
-            isSameDay(race.startAt, date),
+              Date.parse(a.startAt) - Date.parse(b.startAt)
           )
       : [];
   const todayRacesToShow = useTodayRacesWithAnimation(todayRaces);
-  const heroImageUrl = useHeroImage(todayRaces);
+  // const heroImageUrl = useHeroImage(todayRaces);
 
   return (
     <Container>
-      {heroImageUrl !== null && <HeroImage url={heroImageUrl} />}
+      <HeroImage url="/assets/images/hero.jpg" />
 
       <Spacer mt={Space * 2} />
       {userData && (
