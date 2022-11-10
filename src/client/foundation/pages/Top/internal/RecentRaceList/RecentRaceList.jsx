@@ -28,7 +28,10 @@ const fadeIn = keyframes`
 const ItemWrapper = styled.li`
   background: ${Color.mono[0]};
   border-radius: ${Radius.MEDIUM};
+  opacity: 0;
   animation: ${fadeIn} .5s cubic-bezier(0.2, 0.6, 0.35, 1);
+  animation-delay: ${({delay}) => delay}s;
+  animation-fill-mode: forwards;
   padding: ${Space * 3}px;
 `;
 
@@ -54,11 +57,11 @@ const RaceTitle = styled.h2`
  */
 
 /** @type {React.VFC<ItemProps>} */
-const Item = ({ race, closeAt }) => {
+const Item = ({ race, closeAt, delay }) => {
   const closeAtText = formatCloseAt(closeAt);
 
   return (
-    <ItemWrapper>
+    <ItemWrapper delay={delay}>
       <Stack horizontal alignItems="center" justifyContent="space-between">
         <Stack gap={Space * 1}>
           <RaceTitle>{race.name}</RaceTitle>

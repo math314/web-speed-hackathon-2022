@@ -76,26 +76,6 @@ function useTodayRacesWithAnimation(races) {
   return racesToShow;
 }
 
-/**
- * @param {Model.Race[]} todayRaces
- * @returns {string | null}
- */
-function useHeroImage(todayRaces) {
-  const firstRaceId = todayRaces[0]?.id;
-  const url =
-    firstRaceId !== undefined
-      ? `/api/hero?firstRaceId=${firstRaceId}`
-      : "/api/hero";
-  const { data } = useFetch(url, jsonFetcher);
-
-  if (firstRaceId === undefined || data === null) {
-    return null;
-  }
-
-  const imageUrl = `${data.url}?${data.hash}`;
-  return imageUrl;
-}
-
 const convertCurrentDate = () => {
   const n = new Date();
   return `${n.getFullYear()}-${(n.getMonth() + 1).toString().padStart(2, '0')}-${n.getDate().toString().padStart(2, '0')}`;
@@ -137,7 +117,7 @@ export const Top = () => {
     revalidate();
   }, [revalidate]);
 
-  const todayRaces =
+  const todayRacesToShow =
     raceData != null
       ? [...raceData.races]
           .filter((/** @type {Model.Race} */ race) => isSameDay(race.startAt, date))
@@ -146,12 +126,11 @@ export const Top = () => {
               Date.parse(a.startAt) - Date.parse(b.startAt)
           )
       : [];
-  const todayRacesToShow = useTodayRacesWithAnimation(todayRaces);
   // const heroImageUrl = useHeroImage(todayRaces);
 
   return (
     <Container>
-      <HeroImage url="/assets/images/hero.jpg" />
+      <HeroImage url="/assets/images/hero.avif" />
 
       <Spacer mt={Space * 2} />
       {userData && (
@@ -175,10 +154,13 @@ export const Top = () => {
         <Heading as="h1">本日のレース</Heading>
         {todayRacesToShow.length > 0 && (
           <RecentRaceList>
-            {todayRacesToShow.map((race) => (
-              <RecentRaceList.Item key={race.id} race={race} closeAt={race.closeAt} />
+            {todayRacesToShow.map((race, i) => (
+              <RecentRaceList.Item key={race.id} race={race} closeAt={race.closeAt} delay={i / 10} />
             ))}
           </RecentRaceList>
+        )}
+        {todayRacesToShow.length == 0 && (
+          <Spacer mt={500} />
         )}
       </section>
 
