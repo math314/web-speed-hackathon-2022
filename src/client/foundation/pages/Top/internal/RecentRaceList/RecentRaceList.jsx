@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 import { LinkButton } from "../../../../components/buttons/LinkButton";
 import { Spacer } from "../../../../components/layouts/Spacer";
@@ -17,10 +17,19 @@ export const RecentRaceList = ({ children }) => {
   );
 };
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
 const ItemWrapper = styled.li`
   background: ${Color.mono[0]};
   border-radius: ${Radius.MEDIUM};
-  opacity: ${({ $opacity }) => $opacity};
+  animation: ${fadeIn} .5s cubic-bezier(0.2, 0.6, 0.35, 1);
   padding: ${Space * 3}px;
 `;
 
@@ -49,29 +58,29 @@ const RaceTitle = styled.h2`
 const Item = ({ race, closeAt }) => {
   const closeAtText = formatCloseAt(closeAt);
 
-  const {
-    abortAnimation,
-    resetAnimation,
-    startAnimation,
-    value: opacity,
-  } = useAnimation({
-    duration: 500,
-    end: 1,
-    start: 0,
-    timingFunction: easeOutCubic,
-  });
+  // const {
+  //   abortAnimation,
+  //   resetAnimation,
+  //   startAnimation,
+  //   value: opacity,
+  // } = useAnimation({
+  //   duration: 500,
+  //   end: 1,
+  //   start: 0,
+  //   timingFunction: easeOutCubic,
+  // });
 
-  useEffect(() => {
-    resetAnimation();
-    startAnimation();
+  // useEffect(() => {
+  //   resetAnimation();
+  //   startAnimation();
 
-    return () => {
-      abortAnimation();
-    };
-  }, [race.id, startAnimation, abortAnimation, resetAnimation]);
+  //   return () => {
+  //     abortAnimation();
+  //   };
+  // }, [race.id, startAnimation, abortAnimation, resetAnimation]);
 
   return (
-    <ItemWrapper $opacity={opacity}>
+    <ItemWrapper>
       <Stack horizontal alignItems="center" justifyContent="space-between">
         <Stack gap={Space * 1}>
           <RaceTitle>{race.name}</RaceTitle>
