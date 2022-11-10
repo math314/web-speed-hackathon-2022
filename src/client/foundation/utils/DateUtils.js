@@ -16,7 +16,7 @@ export const isSameDay = (dateLeft, dateRight) => {
  */
 export const formatTime = (ts) => {
   const time = new Date(ts);
-  const h = time.getHours().toString().padStart(2, "0");
+  const h = time.getHours().toString();
   const m = time.getMinutes().toString().padStart(2, "0");
   return `${h}:${m}`;
 };

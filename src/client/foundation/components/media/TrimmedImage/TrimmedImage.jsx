@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const TrimmedImageWrapper = styled.img`
-  width: ${({width}) => width}px;
-  height: ${({height}) => height}px;
+  width: ${({$width}) => $width}px;
+  aspect-ratio: ${({$width, $height}) => `${$width}/${$height}`};
   object-fit: cover;
 `;
 
@@ -17,5 +17,5 @@ const TrimmedImageWrapper = styled.img`
 
 /** @type {React.VFC<Props>} */
 export const TrimmedImage = ({ height, src, width }) => {
-  return <TrimmedImageWrapper src={src} width={width} height={height} />;
+  return <TrimmedImageWrapper src={src} $width={width} $height={height} />;
 };
