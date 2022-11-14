@@ -73,6 +73,13 @@ module.exports = [
     module: {
       rules: [
         {
+          resourceQuery: (value) => {
+            const query = new URLSearchParams(value);
+            return query.has("raw");
+          },
+          type: "asset/source",
+        },
+        {
           exclude: /node_modules/,
           test: /\.(js|mjs|jsx)$/,
           use: {
