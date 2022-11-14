@@ -36,7 +36,10 @@ export const RaceResult = () => {
   );
 
   if (data == null) {
-    return <Container>Loading...</Container>;
+    return <Container>
+      Loading...
+      <Spacer mt={800} />
+      </Container>;
   }
 
   return (

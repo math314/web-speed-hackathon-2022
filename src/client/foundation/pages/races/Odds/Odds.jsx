@@ -57,7 +57,10 @@ export const Odds = () => {
   );
 
   if (data == null) {
-    return <Container>Loading...</Container>;
+    return <Container>
+      Loading...
+      <Spacer mt={800} />
+      </Container>;
   }
 
   const isRaceClosed = Date.parse(data.closeAt) < new Date().getTime();
