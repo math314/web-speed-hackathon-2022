@@ -85,6 +85,14 @@ export const spaRoute = async (fastify) => {
     reply.type("text/html").send(await render(req.url, precomputedValue));
   });
 
+  fastify.get("/races/:raceId/result", async (req, reply) => {
+    const race = await getRaceDetails(req.params.raceId);
+    const apiUrl = `/api/races/${req.params.raceId}`;
+    let precomputedValue = {};
+    precomputedValue[apiUrl] = race;
+    reply.type("text/html").send(await render(req.url, precomputedValue));
+  });
+
   fastify.get("*", async (_req, reply) => {
     reply.type("text/html").send(await render(_req.url, {}));
   });
