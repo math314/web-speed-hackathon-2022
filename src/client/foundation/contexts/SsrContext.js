@@ -17,7 +17,7 @@ const SsrContext = React.createContext({
 });
 
 export const SsrContextProvider = ({ isServerSide, precomputedValues, children }) => {
-  const [values, setValues] = useState(precomputedValues);
+  const [values, setValues] = useState(precomputedValues || {});
 
   return (
     <SsrContext.Provider
@@ -33,12 +33,15 @@ export const SsrContextProvider = ({ isServerSide, precomputedValues, children }
 };
 
 export const maybeConsumePrecomputedValuesForSsr = (apiPathWithParams) => {
-  const { values } = useContext(SsrContext);
+  const { isServerSide, values } = useContext(SsrContext);
   if (!(apiPathWithParams in values)) {
     return null;
   }
   const result = values[apiPathWithParams];
-  delete values[apiPathWithParams];
+
+  if (!isServerSide) {
+    delete values[apiPathWithParams];
+  }
 
   return result;
 };

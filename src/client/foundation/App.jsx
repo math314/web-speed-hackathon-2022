@@ -21,7 +21,7 @@ export const App = ({isServerSide, precomputedValues}) => {
 };
 
 /** @type {React.VFC} */
-export const Html = ({children}) => (
+export const Html = ({precomputedValues, children}) => (
   <html>
     <head>
     <meta charSet="UTF-8" />
@@ -31,6 +31,10 @@ export const Html = ({children}) => (
     <link rel="preload" as="image" href="/assets/images/hero.avif" />
   </head>
   <body>
+    {precomputedValues && 
+        // note: vulnerable, DON'T DO THIS ON ACTUAL PRODUCTION. https://redux.js.org/usage/server-rendering#security-considerations
+        <script dangerouslySetInnerHTML={{__html: `window.__INITIAL_STATE__ = ${JSON.stringify(precomputedValues)}`}} />
+    }
     {children}
     <script src="/main.js"></script>
   </body>

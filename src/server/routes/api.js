@@ -6,6 +6,41 @@ import { BettingTicket, Race, User } from "../../model/index.js";
 import { createConnection } from "../typeorm/connection.js";
 import { initialize } from "../typeorm/initialize.js";
 
+export const getRaces = async ({since, until}) => {
+  if (since != null && !since.isValid()) {
+    throw fastify.httpErrors.badRequest();
+  }
+  if (until != null && !until.isValid()) {
+    throw fastify.httpErrors.badRequest();
+  }
+
+  const repo = (await createConnection()).getRepository(Race);
+
+  const where = {};
+  if (since != null && until != null) {
+    Object.assign(where, {
+      startAt: Between(
+        since.utc().format("YYYY-MM-DD HH:mm:ss"),
+        until.utc().format("YYYY-MM-DD HH:mm:ss"),
+      ),
+    });
+  } else if (since != null) {
+    Object.assign(where, {
+      startAt: MoreThanOrEqual(since.utc().format("YYYY-MM-DD HH:mm:ss")),
+    });
+  } else if (until != null) {
+    Object.assign(where, {
+      startAt: LessThanOrEqual(since.utc().format("YYYY-MM-DD HH:mm:ss")),
+    });
+  }
+
+  const races = await repo.find({
+    where,
+  });
+
+  return races;
+};
+
 /**
  * @type {import('fastify').FastifyPluginCallback}
  */
@@ -52,36 +87,7 @@ export const apiRoute = async (fastify) => {
     const until =
       req.query.until != null ? moment.unix(req.query.until) : undefined;
 
-    if (since != null && !since.isValid()) {
-      throw fastify.httpErrors.badRequest();
-    }
-    if (until != null && !until.isValid()) {
-      throw fastify.httpErrors.badRequest();
-    }
-
-    const repo = (await createConnection()).getRepository(Race);
-
-    const where = {};
-    if (since != null && until != null) {
-      Object.assign(where, {
-        startAt: Between(
-          since.utc().format("YYYY-MM-DD HH:mm:ss"),
-          until.utc().format("YYYY-MM-DD HH:mm:ss"),
-        ),
-      });
-    } else if (since != null) {
-      Object.assign(where, {
-        startAt: MoreThanOrEqual(since.utc().format("YYYY-MM-DD HH:mm:ss")),
-      });
-    } else if (until != null) {
-      Object.assign(where, {
-        startAt: LessThanOrEqual(since.utc().format("YYYY-MM-DD HH:mm:ss")),
-      });
-    }
-
-    const races = await repo.find({
-      where,
-    });
+    const races = await getRaces({since, until});
 
     res.send({ races });
   });

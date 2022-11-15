@@ -6,10 +6,11 @@ import { Html, App } from "../../client/foundation/App"
 import { renderToString } from "react-dom/server"
 import { StaticRouter } from "react-router-dom/server";
 import React from "react";
+import { getRaces } from "./api"
 
 const render = async (url, precomputedValues) => {
   const rendered = renderToString(
-    <Html>
+    <Html precomputedValues={precomputedValues}>
       <StaticRouter location={url}>
       <App isServerSide={true} precomputedValues={precomputedValues} />
       </StaticRouter>
@@ -33,7 +34,11 @@ export const spaRoute = async (fastify) => {
   });
 
   fastify.get("/", async (_req, reply) => {
-    reply.type("text/html").send(await render(_req.url, {}));
+    const races = await getRaces({since: null, until: null});
+    const precomputedValue = {
+      "/api/races": { races },
+    }
+    reply.type("text/html").send(await render(_req.url, precomputedValue));
   });
 
   fastify.get("*", async (_req, reply) => {

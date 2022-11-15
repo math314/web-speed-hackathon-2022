@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { maybeConsumePrecomputedValuesForSsr } from "../contexts/SsrContext"
 
 /**
  * @template T
@@ -15,13 +16,20 @@ import { useEffect, useState } from "react";
  * @returns {ReturnValues<T>}
  */
 export function useFetch(apiPath, fetcher) {
+  const precomputedValue = maybeConsumePrecomputedValuesForSsr(apiPath);
+
   const [result, setResult] = useState({
-    data: null,
+    data: precomputedValue,
     error: null,
-    loading: true,
+    loading: !!precomputedValue,
   });
 
+
   useEffect(() => {
+    if (precomputedValue) {
+      return ;
+    }
+
     setResult(() => ({
       data: null,
       error: null,
