@@ -6,7 +6,7 @@ import { App } from "../../client/foundation/App"
 import { renderToString } from "react-dom/server"
 import { StaticRouter } from "react-router-dom/server";
 import React from "react";
-import { getRaces } from "./api"
+import { getRaces, getRaceDetails } from "./api"
 
 const render = async (url, precomputedValues) => {
   const sheet = new ServerStyleSheet();
@@ -17,8 +17,7 @@ const render = async (url, precomputedValues) => {
         <App isServerSide={true} precomputedValues={precomputedValues} />
       </StaticRouter>
     ));
-    const StyleEl = sheet.getStyleElement(); // or sheet.getStyleElement();
-    console.log(StyleEl);
+    const StyleEl = sheet.getStyleElement();
 
     const rendered = renderToString(
       <html>
@@ -27,7 +26,6 @@ const render = async (url, precomputedValues) => {
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>CyberTicket</title>
-          <link rel="preload" as="image" href="/assets/images/hero.avif" />
           {precomputedValues && 
               // note: vulnerable, DON'T DO THIS ON ACTUAL PRODUCTION. https://redux.js.org/usage/server-rendering#security-considerations
               <script dangerouslySetInnerHTML={{__html: `window.__INITIAL_STATE__ = ${JSON.stringify(precomputedValues)}`}} />
@@ -69,6 +67,22 @@ export const spaRoute = async (fastify) => {
       "/api/races": { races },
     }
     reply.type("text/html").send(await render(_req.url, precomputedValue));
+  });
+
+  fastify.get("/races/:raceId/race-card", async (req, reply) => {
+    const race = await getRaceDetails(req.params.raceId);
+    const apiUrl = `/api/races/${req.params.raceId}`;
+    let precomputedValue = {};
+    precomputedValue[apiUrl] = race;
+    reply.type("text/html").send(await render(req.url, precomputedValue));
+  });
+
+  fastify.get("/races/:raceId/odds", async (req, reply) => {
+    const race = await getRaceDetails(req.params.raceId);
+    const apiUrl = `/api/races/${req.params.raceId}`;
+    let precomputedValue = {};
+    precomputedValue[apiUrl] = race;
+    reply.type("text/html").send(await render(req.url, precomputedValue));
   });
 
   fastify.get("*", async (_req, reply) => {

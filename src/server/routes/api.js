@@ -41,6 +41,14 @@ export const getRaces = async ({since, until}) => {
   return races;
 };
 
+export const getRaceDetails = async (raceId) => {
+  const repo = (await createConnection()).getRepository(Race);
+
+  return await repo.findOne(raceId, {
+    relations: ["entries", "entries.player", "trifectaOdds"],
+  });
+}
+
 /**
  * @type {import('fastify').FastifyPluginCallback}
  */
@@ -93,11 +101,7 @@ export const apiRoute = async (fastify) => {
   });
 
   fastify.get("/races/:raceId", async (req, res) => {
-    const repo = (await createConnection()).getRepository(Race);
-
-    const race = await repo.findOne(req.params.raceId, {
-      relations: ["entries", "entries.player", "trifectaOdds"],
-    });
+    const race = await getRaceDetails(req.params.raceId);
 
     if (race === undefined) {
       throw fastify.httpErrors.notFound();
