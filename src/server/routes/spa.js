@@ -61,36 +61,68 @@ export const spaRoute = async (fastify) => {
     throw fastify.httpErrors.notFound();
   });
 
-  fastify.get("/", async (_req, reply) => {
+  const cache = {};
+
+  const insertCacheValue = (url, value) => {
+    console.log({url, value});
+    cache[url] = value;
+    return value;
+  }
+
+  const getCacheValue = (url) => {
+    return cache[url];
+  }
+
+  fastify.get("/", async (req, reply) => {
+    const preCalced = getCacheValue(req.url);
+    if (preCalced) {
+      reply.type("text/html").send(preCalced);
+      return;
+    }
     const races = await getRaces({since: null, until: null});
     const precomputedValue = {
       "/api/races": { races },
     }
-    reply.type("text/html").send(await render(_req.url, precomputedValue));
+    reply.type("text/html").send(insertCacheValue(req.url, await render(req.url, precomputedValue)));
   });
 
   fastify.get("/races/:raceId/race-card", async (req, reply) => {
+    const preCalced = getCacheValue(req.url);
+    if (preCalced) {
+      reply.type("text/html").send(preCalced);
+      return;
+    }
     const race = await getRaceDetails(req.params.raceId);
     const apiUrl = `/api/races/${req.params.raceId}`;
     let precomputedValue = {};
     precomputedValue[apiUrl] = race;
-    reply.type("text/html").send(await render(req.url, precomputedValue));
+    reply.type("text/html").send(insertCacheValue(req.url, await render(req.url, precomputedValue)));
   });
 
   fastify.get("/races/:raceId/odds", async (req, reply) => {
+    const preCalced = getCacheValue(req.url);
+    if (preCalced) {
+      reply.type("text/html").send(preCalced);
+      return;
+    }
     const race = await getRaceDetails(req.params.raceId);
     const apiUrl = `/api/races/${req.params.raceId}`;
     let precomputedValue = {};
     precomputedValue[apiUrl] = race;
-    reply.type("text/html").send(await render(req.url, precomputedValue));
+    reply.type("text/html").send(insertCacheValue(req.url, await render(req.url, precomputedValue)));
   });
 
   fastify.get("/races/:raceId/result", async (req, reply) => {
+    const preCalced = getCacheValue(req.url);
+    if (preCalced) {
+      reply.type("text/html").send(preCalced);
+      return;
+    }
     const race = await getRaceDetails(req.params.raceId);
     const apiUrl = `/api/races/${req.params.raceId}`;
     let precomputedValue = {};
     precomputedValue[apiUrl] = race;
-    reply.type("text/html").send(await render(req.url, precomputedValue));
+    reply.type("text/html").send(insertCacheValue(req.url, await render(req.url, precomputedValue)));
   });
 
   fastify.get("*", async (_req, reply) => {
