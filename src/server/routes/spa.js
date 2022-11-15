@@ -2,27 +2,10 @@ import { join } from "path";
 
 import fastifyStatic from "fastify-static";
 
-import {App} from "../../client/foundation/App"
+import { Html, App } from "../../client/foundation/App"
 import { renderToString } from "react-dom/server"
 import { StaticRouter } from "react-router-dom/server";
 import React from "react";
-
-
-const Html = ({children}) => (
-<html>
-  <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CyberTicket</title>
-  <link rel="preload" as="image" href="/assets/images/hero.avif" />
-</head>
-<body>
-  {children}
-  <script src="/main.js"></script>
-</body>
-</html>
-);
 
 /**
  * @type {import('fastify').FastifyPluginCallback}
