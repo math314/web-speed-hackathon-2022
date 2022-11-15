@@ -7,6 +7,17 @@ import { renderToString } from "react-dom/server"
 import { StaticRouter } from "react-router-dom/server";
 import React from "react";
 
+const render = async (url, precomputedValues) => {
+  const rendered = renderToString(
+    <Html>
+      <StaticRouter location={url}>
+      <App isServerSide={true} precomputedValues={precomputedValues} />
+      </StaticRouter>
+    </Html>
+    );
+    return "<!DOCTYPE html>" + rendered;
+};
+
 /**
  * @type {import('fastify').FastifyPluginCallback}
  */
@@ -21,16 +32,12 @@ export const spaRoute = async (fastify) => {
     throw fastify.httpErrors.notFound();
   });
 
-  fastify.get("*", (_req, reply) => {
-    const rendered = renderToString(
-    <Html>
-      <StaticRouter location={_req.url}>
-        <App />
-      </StaticRouter>
-    </Html>
-    );
+  fastify.get("/", async (_req, reply) => {
+    reply.type("text/html").send(await render(_req.url, {}));
+  });
 
-    reply.type("text/html").send("<!DOCTYPE html>" + rendered);
+  fastify.get("*", async (_req, reply) => {
+    reply.type("text/html").send(await render(_req.url, {}));
   });
 
   // fastify.get("*", (_req, reply) => {

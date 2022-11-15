@@ -9,7 +9,7 @@ import { Html, App } from "./foundation/App";
 hydrate(
 <Html>
     <BrowserRouter>
-        <App />
+        <App isServerSide={false} precomputedValues={{}} />
     </BrowserRouter>
 </Html>
 , document);

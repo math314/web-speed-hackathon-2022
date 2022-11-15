@@ -2,16 +2,19 @@ import React from "react";
 import { StyleSheetManager } from "styled-components";
 
 import { AuthContextProvider } from "./contexts/AuthContext";
+import { SsrContextProvider } from "./contexts/SsrContext";
 import { Routes } from "./routes";
 import { GlobalStyle } from "./styles/GlobalStyle";
 
 /** @type {React.VFC} */
-export const App = () => {
+export const App = ({isServerSide, precomputedValues}) => {
   return (
     <StyleSheetManager disableCSSOMInjection>
       <AuthContextProvider>
         <GlobalStyle />
-        <Routes />
+        <SsrContextProvider {...{isServerSide, precomputedValues}}>
+          <Routes />
+        </SsrContextProvider>
       </AuthContextProvider>
     </StyleSheetManager>
   );
