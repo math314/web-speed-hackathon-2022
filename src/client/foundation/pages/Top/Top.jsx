@@ -81,20 +81,20 @@ const convertCurrentDate = () => {
   return `${n.getFullYear()}-${(n.getMonth() + 1).toString().padStart(2, '0')}-${n.getDate().toString().padStart(2, '0')}`;
 }
 
+const ChargeButton = styled.button`
+background: ${Color.mono[700]};
+border-radius: ${Radius.MEDIUM};
+color: ${Color.mono[0]};
+padding: ${Space * 1}px ${Space * 2}px;
+
+&:hover {
+  background: ${Color.mono[800]};
+}
+`;
+
 /** @type {React.VFC} */
 export const Top = () => {
   const { date = convertCurrentDate() } = useParams();
-
-  const ChargeButton = styled.button`
-    background: ${Color.mono[700]};
-    border-radius: ${Radius.MEDIUM};
-    color: ${Color.mono[0]};
-    padding: ${Space * 1}px ${Space * 2}px;
-
-    &:hover {
-      background: ${Color.mono[800]};
-    }
-  `;
 
   const chargeDialogRef = useRef(null);
 

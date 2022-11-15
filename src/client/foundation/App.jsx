@@ -9,14 +9,12 @@ import { GlobalStyle } from "./styles/GlobalStyle";
 /** @type {React.VFC} */
 export const App = ({isServerSide, precomputedValues}) => {
   return (
-    <StyleSheetManager disableCSSOMInjection>
-      <AuthContextProvider>
-        <GlobalStyle />
-        <SsrContextProvider {...{isServerSide, precomputedValues}}>
-          <Routes />
-        </SsrContextProvider>
-      </AuthContextProvider>
-    </StyleSheetManager>
+    <AuthContextProvider>
+      <GlobalStyle />
+      <SsrContextProvider {...{isServerSide, precomputedValues}}>
+        <Routes />
+      </SsrContextProvider>
+    </AuthContextProvider>
   );
 };
 

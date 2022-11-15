@@ -15,12 +15,7 @@ const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const server = fastify({
   logger: IS_PRODUCTION
     ? false
-    : {
-        prettyPrint: {
-          ignore: "pid,hostname",
-          translateTime: "SYS:HH:MM:ss",
-        },
-      },
+    : false
 });
 server.register(fastifyCompress);
 server.register(fastifySensible);

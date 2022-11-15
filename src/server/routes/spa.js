@@ -1,22 +1,52 @@
 import { join } from "path";
 
 import fastifyStatic from "fastify-static";
-
-import { Html, App } from "../../client/foundation/App"
+import { ServerStyleSheet } from 'styled-components';
+import { App } from "../../client/foundation/App"
 import { renderToString } from "react-dom/server"
 import { StaticRouter } from "react-router-dom/server";
 import React from "react";
 import { getRaces } from "./api"
 
 const render = async (url, precomputedValues) => {
-  const rendered = renderToString(
-    <Html precomputedValues={precomputedValues}>
+  const sheet = new ServerStyleSheet();
+
+  try {
+    const main = renderToString(sheet.collectStyles(
       <StaticRouter location={url}>
-      <App isServerSide={true} precomputedValues={precomputedValues} />
+        <App isServerSide={true} precomputedValues={precomputedValues} />
       </StaticRouter>
-    </Html>
+    ));
+    const StyleEl = sheet.getStyleElement(); // or sheet.getStyleElement();
+    console.log(StyleEl);
+
+    const rendered = renderToString(
+      <html>
+        <head>
+          <meta charSet="UTF-8" />
+          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>CyberTicket</title>
+          <link rel="preload" as="image" href="/assets/images/hero.avif" />
+          {precomputedValues && 
+              // note: vulnerable, DON'T DO THIS ON ACTUAL PRODUCTION. https://redux.js.org/usage/server-rendering#security-considerations
+              <script dangerouslySetInnerHTML={{__html: `window.__INITIAL_STATE__ = ${JSON.stringify(precomputedValues)}`}} />
+          }
+          {StyleEl}
+        </head>
+        <body>
+          <div id="root" dangerouslySetInnerHTML={{__html: main}} />
+          <script src="/main.js"></script>
+        </body>
+      </html>
     );
     return "<!DOCTYPE html>" + rendered;
+  } catch (error) {
+    // handle error
+    console.error(error);
+  } finally {
+    sheet.seal();
+  }
 };
 
 /**
